@@ -1,0 +1,67 @@
+<html>
+    <body>
+        <p>Enter your order number:</p>
+        <input type = "text" id = "userInput"></input>
+        <button id = "submitButton">Submit</button>
+        <table id = "items"> 
+        </table>
+        <script>
+            function showItems(data){
+                let table = document.getElementsByTagName("table")[0];
+                while (table.firstChild){
+                    table.removeChild(table.firstChild);
+                }
+                headerTR = document.createElement("tr");
+                table.appendChild(headerTR);
+                let itemHeader = document.createElement("th");
+                itemHeader.innerText = "Item";
+                table.appendChild(itemHeader);
+                let quantityHeader = document.createElement("th");
+                quantityHeader.innerText = "Quantity";
+                table.appendChild(quantityHeader);
+                let priceHeader = document.createElement("th");
+                priceHeader.innerText = "Price";
+                table.appendChild(priceHeader);
+                let itemSlot = document.getElementById('items');
+                data.forEach((item) => {
+                    tr = document.createElement("tr");
+                    itemSlot.appendChild(tr);
+                    let itemName = document.createElement('td');
+                    itemName.innerText = item.item;
+                    itemSlot.appendChild(itemName);
+                    let itemQuantity = document.createElement('td');
+                    itemQuantity.innerText = item.quantity;
+                    itemSlot.appendChild(itemQuantity);
+                    let itemPrice = document.createElement('td');
+                    itemPrice.innerText = item.price;
+                    itemSlot.appendChild(itemPrice);
+                })
+            }
+
+            function fetchItems(){
+                orderNumber = document.getElementById("userInput").value;
+                console.log("order number: " + orderNumber); 
+                console.log("fetching items");
+                let xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = () =>{
+                    console.log("detecteda  change to readyState: " + xhr.readyState);
+                    console.log(xhr);
+                    if (xhr.readyState === 4){
+                        console.log("The data is ready: ");
+                        console.log("Data as received: ");
+                        console.log(xhr.response);
+                        let data = JSON.parse(xhr.response);
+                        console.log("Data after being parsed: ");
+                        console.log(data);
+                        showItems(data);
+                    }
+                }
+                currentOrder = "https://www.cis.gvsu.edu/~kurmasz/Orders/" + orderNumber;
+                console.log("current Order : " + currentOrder);
+                xhr.open("GET", currentOrder, true);
+                xhr.send();
+            }
+            document.getElementById('submitButton').addEventListener('click', fetchItems);
+        </script>
+    </body>
+</html>
